@@ -1,0 +1,118 @@
+Commands for stepper motor in Serial mode:
+Note: only two stepper motors are being controlled. For controlling the stepper first it has to be initialised, like speed [duration between each step] and number of revolution.thesymbol’_’is space.
+The initialisation commands for speed is :“$_stepper_1_speed_0060_/n”
+Command for number of steps per revolution is :”$_stepper_1_steps_+0200_/n”
+The ‘+’ symbol indicates clock wise direction
+Similarly for foranti clock wise direction : “$_stepper_1_steps_-0200 /n”
+Once the initialisation is done, we give go command like below:
+“$_stepper_1_go_/n” ->this will make the stepper 1 to rotate for the initialised value
+“$_stepper_2_go_/n” ->this will make the stepper 2 to rotate for the initialised value
+“$_stepper_0_go_/n” ->this will make the both stepper 1 and 2  to rotate for the initialised value
+
+Example 1: initialisation for stepper 1
+
+Speed[duration between each steps]
+Serial.println(“stepper 1 speed 0060 /n”); the speed between each steps is 60rpm
+
+Number of steps per revolution 
+Serial.println(“stepper 1 steps +0200 /n”);the number of steps is 200 and it rotates in clock wise direction.
+
+To make the stepper 1 to rotate is:
+Serial.println(“stepper 1 go /n”);
+
+Example 2:initialisation for stepper 2
+
+Speed[duration between each steps]
+Serial.println(“stepper 2 speed 0160 /n”); the speed between each steps is 160rpm
+
+Number of steps per revolution 
+Serial.println(“stepper 2 steps -0200 /n”);the number of steps is 200 and it rotates in anti clock wise direction.
+
+To make the stepper 1 to rotate is:
+Serial.println(“stepper 2 go /n”);
+
+If you want to make both the stepper to rotate after it has been initialised is 
+Serial.println(“stepper 0 go /n”);
+
+Note : once initialised you can call the go command as many times as wanted.
+
+
+
+
+Commands for stepper in spimode:It is same as mentioned in serial mode except  commands ends with ‘\n’
+
+char c;
+SPI.begin ();
+SPI.setClockDivider(SPI_CLOCK_DIV8);
+
+digitalWrite(SS, LOW);    // enable Slave Select
+for (const char * p = "$ stepper 1 speed 0090 \n" ; c = *p; p++)  stepper 1 speed 90 rpm
+SPI.transfer (c);
+digitalWrite(SS, HIGH);  // disable Slave Select
+delay(3000);
+
+digitalWrite(SS, LOW);    
+for (const char * p = "$ stepper 1 steps +0290 \n" ; c = *p; p++) stepper 1 290 steps clockwise
+SPI.transfer (c);
+digitalWrite(SS, HIGH);
+delay(3000);
+
+digitalWrite(SS, LOW);    
+for (const char * p = "$ stepper 2 speed 0060 \n" ; c = *p; p++)stepper 2 speed 60 rpm
+SPI.transfer (c);
+digitalWrite(SS, HIGH);
+delay(3000);
+
+digitalWrite(SS, LOW);    
+for (const char * p = "$ stepper 2 steps -0290 \n" ; c = *p; p++)stepper 2 290 steps anti clock
+SPI.transfer (c);
+digitalWrite(SS, HIGH);
+delay(3000);
+
+digitalWrite(SS, LOW);    
+for (const char * p = "$ stepper 0 go \n" ; c = *p; p++)//drives both the stepper
+SPI.transfer (c);
+digitalWrite(SS, HIGH);
+
+digitalWrite(SS, LOW);    
+for (const char * p = "$ stepper 1 go \n" ; c = *p; p++)//drives only the stepper 1
+SPI.transfer (c);
+digitalWrite(SS, HIGH);
+
+digitalWrite(SS, LOW);    
+for (const char * p = "$ stepper 2 go \n" ; c = *p; p++)//drives only the stepper 2
+SPI.transfer (c);
+digitalWrite(SS, HIGH);
+
+
+
+
+
+
+Commands for stepper in i2c mode:
+it is same as above described
+example:
+Wire.beginTransmission(4); // transmit to device #4 i.e, stepper
+Wire.write("$ stepper 1 speed 0090 \n "); //stepper 1 speed 90 rpm
+Wire.endTransmission();    // stop transmitting
+delay(4000);
+
+Wire.beginTransmission(4); 
+Wire.write("$ stepper 1 steps +0290 \n "); stepper 1 290 steps in clock wise direction
+Wire.endTransmission();    // stop transmitting
+delay(4000);
+
+Wire.beginTransmission(4); 
+Wire.write("$ stepper 2 speed 0060 \n "); //stepper 2 speed 60 rpm       
+Wire.endTransmission();    // stop transmitting
+delay(4000);
+
+Wire.beginTransmission(4); 
+Wire.write("$ stepper 2 steps -0290 \n ");//stepper 1 290 steps in anti clock wise direction        
+Wire.endTransmission();    // stop transmitting
+delay(4000);
+
+Wire.beginTransmission(4); 
+Wire.write("$ stepper 0 go \n ");  // will rotate both steppers
+Wire.endTransmission();    // stop transmitting
+delay(4000);
